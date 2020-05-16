@@ -31,6 +31,12 @@ avgDaySteps <- mean(dailySummary$dailySteps, na.rm = TRUE)
 paste("Daily Average Steps: ", round(avgDaySteps, 2))
 ```
 
+Also what does the distribution of daily steps look like.
+
+``` {r dailyStepHist, echo = TRUE, message = FALSE, warning = FALSE}
+qplot(x = dailySteps, data = dailySummary)
+
+```
 
 ## What is the average daily activity pattern?
 Next let's review the average daily activity.
@@ -108,15 +114,17 @@ dow <- NULL
 for (i in 1:length(fullData$date)) { dow[i] <- dayID(fullData$date[i]) }
 fullDataDay <- cbind(fullData, Weekday = dow)
 fullDataDay <- group_by(fullDataDay, interval, Weekday)
-fullDataDay$interval <- as_datetime(hm(fullDataDay$interval/100))
 avgWeekDay <- summarise(fullDataDay, intervalAvg = mean(steps, na.rm = TRUE))
+avgWeekDay$interval <- as_datetime(hm(avgWeekDay$interval/100))
 ```
 
 Once this is done let's compare them visually.
 
 ``` {r compareGraph, echo = TRUE}
 graf3 <- qplot(x = interval, y = intervalAvg, data = avgWeekDay, 
-               facets = Weekday ~ ., geom = "line")
+               facets = Weekday ~ ., geom = "line") +
+            xlab("Time Interval") + scale_x_datetime(date_labels = "%R", date_breaks = "2 hours") +
+            ylab("Average Steps per Interval")
 print(graf3)
 
 

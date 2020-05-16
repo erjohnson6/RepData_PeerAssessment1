@@ -37,6 +37,14 @@ paste("Daily Average Steps: ", round(avgDaySteps, 2))
 ## [1] "Daily Average Steps:  10766.19"
 ```
 
+Also what does the distribution of daily steps look like.
+
+
+```r
+qplot(x = dailySteps, data = dailySummary)
+```
+
+![](PA1_template_files/figure-html/dailyStepHist-1.png)<!-- -->
 
 ## What is the average daily activity pattern?
 Next let's review the average daily activity.
@@ -121,7 +129,7 @@ print(xt, type = "html")
 ```
 
 <!-- html table generated in R 3.6.2 by xtable 1.8-4 package -->
-<!-- Fri May 15 12:28:04 2020 -->
+<!-- Sat May 16 09:55:31 2020 -->
 <table border=1>
 <tr> <th>  </th> <th> Raw.Data </th> <th> Imputed.Data </th>  </tr>
   <tr> <td align="right"> Median </td> <td align="right"> 10765.00 </td> <td align="right"> 10766.19 </td> </tr>
@@ -142,8 +150,8 @@ dow <- NULL
 for (i in 1:length(fullData$date)) { dow[i] <- dayID(fullData$date[i]) }
 fullDataDay <- cbind(fullData, Weekday = dow)
 fullDataDay <- group_by(fullDataDay, interval, Weekday)
-fullDataDay$interval <- as_datetime(hm(fullDataDay$interval/100))
 avgWeekDay <- summarise(fullDataDay, intervalAvg = mean(steps, na.rm = TRUE))
+avgWeekDay$interval <- as_datetime(hm(avgWeekDay$interval/100))
 ```
 
 Once this is done let's compare them visually.
@@ -151,7 +159,9 @@ Once this is done let's compare them visually.
 
 ```r
 graf3 <- qplot(x = interval, y = intervalAvg, data = avgWeekDay, 
-               facets = Weekday ~ ., geom = "line")
+               facets = Weekday ~ ., geom = "line") +
+            xlab("Time Interval") + scale_x_datetime(date_labels = "%R", date_breaks = "2 hours") +
+            ylab("Average Steps per Interval")
 print(graf3)
 ```
 
